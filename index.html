@@ -9,22 +9,25 @@
         <div class="card">
             <div class="search">
                 <input type="text" placeholder="enter city name" spellcheck="false">
-                <button><img src="search-icon.png"></button>
+                <button><img src="https://cdn3.iconfinder.com/data/icons/feather-5/24/search-512.png"></button>
+            </div>
+            <div class="error"> 
+                <p>City not found</p>
             </div>
             <div class="weather">
-                <img src="rain.jpg" class="weather-icon">
+                <img src="https://clipart-library.com/3/cloud-with-rain-clipart-md.png" class="weather-icon">
                 <div class="temp">22°C</div>
                 <h2 class="city">New York</h2>
                 <div class="details">
                     <div class="col">
-                        <img src="humidity.jpg">
+                        <img src="https://www.freepnglogos.com/uploads/water-drop-png/water-drop-png-illustration-three-water-drops-clippix-etc-22.png">
                         <div>
                             <p class="humidity">50%</p>
                             <p>Humidity</p>
                         </div>
                     </div>
                     <div class="col">
-                        <img src="wind.jpg">
+                        <img src="https://static-00.iconduck.com/assets.00/wind-icon-2048x1570-qr102xee.png">
                         <div>
                             <p class="wind">15 km/h</p>
                             <p>Wind Speed</p>
@@ -38,15 +41,40 @@
             const apiUrl="https://api.openweathermap.org/data/2.5/weather?&units=metric&q=";
             const searchBox=document.querySelector(".search input");
             const searchBtn=document.querySelector(".search button");
+            const weatherIcon=document.querySelector(".weather-icon");
+
             async function checkWeather(city){
                 const response=await fetch(apiUrl + city + `&appid=${apiKey}`);
+                if(response.status==404){
+                    document.querySelector(".error").style.display="block";
+                    document.querySelector(".weather").style.display="none";
+                }else{
                 var data=await response.json();
-                console.log(data);
+              
                 document.querySelector(".city").innerHTML=data.name;
                 document.querySelector(".temp").innerHTML=Math.round(data.main.temp) + "°C";
                 document.querySelector(".humidity").innerHTML=data.main.humidity + "%";
                 document.querySelector(".wind").innerHTML=data.wind.speed + "km/h";
+
+                if(data.weather[0].main=="Clouds"){
+                    weatherIcon.src="https://cdn-icons-png.flaticon.com/256/5903/5903939.png";
+                }
+                 else if(data.weather[0].main=="Clear"){
+                    weatherIcon.src="https://cdn-icons-png.flaticon.com/256/1400/1400310.png";
+                 }
+                 else if(data.weather[0].main=="Rain"){
+                    weatherIcon.src="https://clipart-library.com/3/cloud-with-rain-clipart-md.png";
+                 }
+                 else if(data.weather[0].main=="Drizzle"){
+                    weatherIcon.src="https://www.clipartmax.com/png/small/183-1837549_cloud-drizzle-rain-shower-storm-sun-weather-icon-sun-cloud-and-rain.png";
+                 }
+                 else if(data.weather[0].main=="Mist"){
+                    weatherIcon.src="https://cdn-icons-png.flaticon.com/512/4005/4005901.png";
+                 }
+                 document.querySelector(".weather").style.display="block";
+                 document.querySelector(".error").style.display="none";
             }
+        }
             searchBtn.addEventListener("click",()=>{
                 checkWeather(searchBox.value);
             })
